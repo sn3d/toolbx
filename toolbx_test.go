@@ -1,18 +1,24 @@
 package toolbx
 
 import (
+	"os"
 	"testing"
-	"toolbx/testutil"
 )
 
 func Test_Execute(t *testing.T) {
-	toolbxpath, err := testutil.CreateTestData("./testdata")
+	repo := os.Getenv("TOOLBXREPO")
+	if repo == "" {
+		t.Skip("set TOOLBXREPO to demo repository if you want to run this testutil")
+	}
+
+	toolbxpath, err := os.MkdirTemp("", "toolbx-exec")
 	if err != nil {
 		t.FailNow()
 	}
 
 	toolbx, err := Create(
 		WithToolbxPath(toolbxpath),
+		WithSyncRepo(os.Getenv("TOOLBXREPO"), "main"),
 	)
 
 	if err != nil {

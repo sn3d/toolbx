@@ -9,7 +9,7 @@ import (
 func Test_Sync(t *testing.T) {
 	repo := os.Getenv("TOOLBXREPO")
 	if repo == "" {
-		t.Skip("set TOOLBXREPO to run this testutil")
+		t.Skip("set TOOLBXREPO to demo repository if you want to run this testutil")
 	}
 
 	tempDir, err := os.MkdirTemp("", "toolbx-sync")
