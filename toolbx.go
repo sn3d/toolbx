@@ -146,7 +146,8 @@ func (t *Toolbx) Execute(args []string) error {
 
 func (t *Toolbx) install(cmd *api.Command) (*api.Installation, error) {
 	pkg := cmd.GetPackage()
-	fmt.Printf("Installing %s (version:%s platform:%s)...\n", cmd.GetInstallationID(), cmd.Metadata.Version, pkg.Platform)
+	d := color.New(color.FgHiBlack)
+	d.Printf("Installing %s (version:%s platform:%s)...\n", cmd.GetInstallationID(), cmd.Metadata.Version, pkg.Platform)
 
 	installation := &api.Installation{
 		ID:               cmd.GetInstallationID(),

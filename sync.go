@@ -2,6 +2,7 @@ package toolbx
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
@@ -26,7 +27,9 @@ func sync(repo, branch, token, syncFile string, commandsDir string) error {
 	}
 
 	// sync the commands
-	fmt.Printf("updating commands...\n")
+	d := color.New(color.FgHiBlack)
+	d.Printf("updating commands...\n")
+
 	gitRepo, err := git.PlainOpen(commandsDir)
 	if err != nil {
 		// let's clone the brand-new repo
