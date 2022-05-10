@@ -25,13 +25,21 @@ type Toolbx struct {
 
 func Main(options ...ToolbxOption) error {
 	tlbx, err := Create(options...)
-	if err != nil {
-		log.Fatalln("error starting toolbx", err)
+	if err == MissingRepoError {
+		fmt.Println("Hello, and welcome!")
+		fmt.Println("")
+		fmt.Println("Do one simple configuration step before you start using Toolbx:")
+		fmt.Println("")
+		fmt.Println("    echo \"repository: https://github.com/sn3d/toolbx-demo.git\" > ~/.toolbx.yaml")
+		fmt.Println("")
+		return nil
+	} else if err != nil {
+		log.Fatalln("error starting toolbx:", err)
 	}
 
 	err = tlbx.Execute(os.Args)
 	if err != nil {
-		log.Fatalln("error executing command", err)
+		log.Fatalln("error executing command:", err)
 	}
 
 	return nil
@@ -96,8 +104,10 @@ func (t *Toolbx) Execute(args []string) error {
 		}
 
 		if len(cmd.Args) > 0 {
-			fmt.Printf("Unknown sub-command '%s' in %v\n", cmd.Args[0], cmd.Args)
+			fmt.Printf("Unknown sub-command '%s'\n", cmd.Args[0])
 		}
+
+		fmt.Printf("\n%s\n", cmd.Metadata.Description)
 
 		d := color.New(color.FgHiWhite, color.Bold)
 		d.Printf("\nAvailable sub-commands for %s\n\n", name)

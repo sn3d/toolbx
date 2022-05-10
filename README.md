@@ -21,8 +21,15 @@ But for easy to use you should move the `toolbx` binary somewhere in your `PATH`
 
 When you installed `toolbx` binary, as second step is configuration of your 
 command repository. It's repository where are all commands and subcommands 
-defined. You can use `toolbx-demo` repository.
+defined. You can use `toolbx-demo` repository:
 
 ```
-echo "repository: https://github.com/sn3d/toolbx-demo.git" > ~/.toolbx.yaml
+$ echo "repository: https://github.com/sn3d/toolbx-demo.git" > ~/.toolbx.yaml
+```
+
+Now you can start using `toolbx`. If you run subcommand `toolbx storage`, you
+should be synchronized with command repository, and you should get 
+the list of all `storage` subcommands.
+```
+$ toolbx storage
 ```

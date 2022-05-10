@@ -29,7 +29,7 @@ func (repo *CommandsRepository) GetCommand(args []string) (*api.Command, error) 
 
 	subCmd, err := getSubCommand(rootCmd, args)
 	if errors.Is(err, NoChildError) {
-		return rootCmd, nil
+		subCmd = rootCmd
 	}
 
 	err = loadMetadata(subCmd)
