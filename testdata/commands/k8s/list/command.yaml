@@ -1,0 +1,13 @@
+version: 0.0.4
+description: list all clusters in organization
+
+packages:
+  - platform: darwin-amd64
+    uri: https+zip://github.com/sn3d/toolbx-demo-commands/releases/download/v0.0.4/toolbx-commands-v0.0.4-mac-amd64.zip
+    cmd: bin/mac-amd64/k8s-list
+  - platform: linux-amd64
+    uri: https+zip://github.com/sn3d/toolbx-demo-commands/releases/download/v0.0.4/toolbx-commands-v0.0.4-linux-amd64.zip
+    cmd: bin/linux-amd64/k8s-list
+  - platform: win-amd64
+    uri: https+zip://github.com/sn3d/toolbx-demo-commands/releases/download/v0.0.4/toolbx-commands-v0.0.4-win-amd64.zip
+    cmd: bin/win-amd64/k8s-list
