@@ -19,11 +19,17 @@ func defaultValues(instance *Toolbx) {
 
 func WithToolbxPath(toolbxpath string) ToolbxOption {
 	toolbxpath = toolbxPath(toolbxpath)
+	homeDir, _ := os.UserHomeDir()
 	return func(instance *Toolbx) {
 		instance.syncFile = filepath.Join(toolbxpath, "sync")
 		WithInstallationsDir(filepath.Join(toolbxpath, "installed"))(instance)
 		WithCommandsDir(filepath.Join(toolbxpath, "commands"))(instance)
-		WithConfigFile(filepath.Join(toolbxpath, "config.yaml"))(instance)
+
+		// The configuration is loaded in following order:
+		//    - ~/.toolbx.yaml
+		//    - $TOOLBX/toolbx.yaml
+		WithConfigFile(filepath.Join(homeDir, ".toolbx.yaml"))(instance)
+		WithConfigFile(filepath.Join(toolbxpath, "toolbx.yaml"))(instance)
 	}
 }
 

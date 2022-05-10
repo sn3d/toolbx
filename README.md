@@ -17,4 +17,12 @@ any place.
 But for easy to use you should move the `toolbx` binary somewhere in your `PATH` 
 (e.g. to `/usr/local/bin`).
 
+## Quick Start
 
+When you installed `toolbx` binary, as second step is configuration of your 
+command repository. It's repository where are all commands and subcommands 
+defined. You can use `toolbx-demo` repository.
+
+```
+echo "repository: https://github.com/sn3d/toolbx-demo.git" > ~/.toolbx.yaml
+```

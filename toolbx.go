@@ -51,6 +51,10 @@ func Create(options ...ToolbxOption) (*Toolbx, error) {
 	}
 
 	// validation & post-initialization
+	if toolbx.syncRepo == "" {
+		return nil, MissingRepoError
+	}
+
 	toolbx.installers = map[string]install.Installer{
 		"https+zip": archive.Installer(toolbx.gitlabToken),
 	}
