@@ -1,9 +1,49 @@
-# toolbx
-Create your own organization cli tool like gcloud or aws-cli. Toolbx helps you with exploration and distribution of your internal CLI tools
+# Toolbx
+Put all your organization CLI tools under one roof like `gcloud` or `aws-cli` for
+easy distribution and exploration. 
 
-## Install Toolbx
+## Motivation
 
-Toolbx currently provides binaries for the following:
+I'm working as platform engineer in organization and one of our jobs is creating
+various tools for developer teams. One of our important goals is to provide 
+self-service platform to dev teams. For that reason we're building various small 
+or larger CLI tools, the dev teams can use. We observed 2 problems with our 
+internal tooling:
+
+- exploration
+- distribution
+
+In other words, quite often people wasn't aware that some CLI tools exist. Also, 
+it's important that dev teams are using the latest version of tools and not some 
+outdated versions. We setup internal Homebrew repository we're using for 
+distribution. But it didn't solve exploration problem very well.
+
+We like tools like `gcloud` or `aws` CLI. It's massive CLI, where commands are
+organized as subcommands in groups, where each command and group have some 
+description. From exploration perspective this is working better than a bunch
+of isolated CLI tools. This approach is also creating more consistent tooling 
+and developer have everything on one place.  
+
+But developing monolithic massive CLI tool isn't something you want. Platform 
+subsystems might be maintained by various teams which means the CLI will turn 
+into bottleneck where each team contribute. I wanted to avoid it by splitting 
+subcommands into separated binaries with own lifecycle, own release process 
+and clear ownership. 
+
+To address these problems, I've created Toolbx. 
+
+Toolbx is installed on developer's machine, it's syncing with Git **command repository** 
+where are defined all commands and subcommands hierarchically with metadata like 
+description text etc. Toolbx isn't just command definition. Toolbx also do installation 
+of subcommands as separated binaries. Thanks to this separation, each subcommand might 
+have own repository, versioning, lifecycle. If new version of subcommand is released,
+you have to only change it in main command repository. When developer execute
+the subcommand, and it's older version, the toolbx will update it.
+
+## Installation
+
+Toolbx is simple binary and installation is easy. Toolbx currently provides 
+binaries for the following:
 
 - MacOS (64bit only)
 - Linux 
