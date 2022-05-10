@@ -32,7 +32,7 @@ and clear ownership.
 
 To address these problems, I've created Toolbx. 
 
-Toolbx is installed on developer's machine, it's syncing with Git **command repository** 
+Toolbx is installed on developer's machine, it's syncing with Git [command repository](https://github.com/sn3d/toolbx-demo)
 where are defined all commands and subcommands hierarchically with metadata like 
 description text etc. Toolbx isn't just command definition. Toolbx also do installation 
 of subcommands as separated binaries. Thanks to this separation, each subcommand might 
