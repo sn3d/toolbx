@@ -19,7 +19,7 @@ outdated versions. We setup internal Homebrew repository we're using for
 distribution. But it didn't solve exploration problem very well.
 
 We like tools like `gcloud` or `aws` CLI. It's massive CLI, where commands are
-organized as subcommands in groups, where each command and group have some 
+organized as groups and subcommands. Each group and subcommand have some 
 description. From exploration perspective this is working better than a bunch
 of isolated CLI tools. This approach is also creating more consistent tooling 
 and developer have everything on one place.  
@@ -33,7 +33,7 @@ and clear ownership.
 To address these problems, I've created Toolbx. 
 
 Toolbx is installed on developer's machine, it's syncing with Git [command repository](https://github.com/sn3d/toolbx-demo)
-where are defined all commands and subcommands hierarchically with metadata like 
+where are defined all command groups and subcommands hierarchically with metadata like 
 description text etc. Toolbx isn't just command definition. Toolbx also do installation 
 of subcommands as separated binaries. Thanks to this separation, each subcommand might 
 have own repository, versioning, lifecycle. If new version of subcommand is released,
@@ -60,8 +60,8 @@ But for easy to use you should move the `toolbx` binary somewhere in your `PATH`
 ## Quick Start
 
 When you installed `toolbx` binary, as second step is configuration of your 
-command repository. It's repository where are all commands and subcommands 
-defined. You can use `toolbx-demo` repository:
+[command repository](https://github.com/sn3d/toolbx-demo). It's repository 
+where are all command groups and subcommands defined. You can use `toolbx-demo` repository:
 
 ```
 $ echo "repository: https://github.com/sn3d/toolbx-demo.git" > ~/.toolbx.yaml
@@ -75,7 +75,7 @@ $ toolbx storage
 
 managing organization storage systems
 
-Available sub-commands for storage
+Available subcommands for storage
 
  kafka - manage Kafka
  postgres - manage PostgreSQL in organization
