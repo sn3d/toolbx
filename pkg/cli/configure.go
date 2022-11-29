@@ -30,7 +30,7 @@ func ConfigureCmd(args []string) {
 	configFile := path.Join(configDir, "toolbx.yaml")
 	err := saveConfig(config, configFile)
 	if err != nil {
-		fmt.Printf("Error: %w", err)
+		fmt.Printf("Error: %v", err)
 	}
 }
 
