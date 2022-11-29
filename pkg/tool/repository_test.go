@@ -1,9 +1,9 @@
-package toolbx
+package tool
 
 import (
+	"github.com/sn3d/toolbx/pkg/command"
 	"os"
 	"testing"
-	"toolbx/api"
 )
 
 func Test_SaveAndLoadInstallation(t *testing.T) {
@@ -11,33 +11,33 @@ func Test_SaveAndLoadInstallation(t *testing.T) {
 	installationsPath, _ := os.MkdirTemp("", "toolbx-installations-*")
 	repo := CreateInstallationsRepository(installationsPath)
 
-	// save installation
-	inst := api.Installation{
+	// save installed tool
+	toolInstance := ToolInstance{
 		ID:               "hello",
 		InstalledVersion: "1.0.0",
 	}
 
-	err := repo.SaveInstallation(&inst)
+	err := repo.SaveTool(&toolInstance)
 	if err != nil {
 		t.FailNow()
 	}
 
 	// get the installation
-	cmd := api.Command{
+	cmd := command.CommandInstance{
 		Name:     "hello",
-		Metadata: &api.Metadata{},
+		Metadata: &command.Metadata{},
 	}
 
-	savedInst := repo.GetInstallationForCommand(&cmd)
-	if savedInst == nil {
+	savedTool := repo.GetToolForCommand(&cmd)
+	if savedTool == nil {
 		t.FailNow()
 	}
 
-	if savedInst.InstalledVersion != "1.0.0" {
+	if savedTool.InstalledVersion != "1.0.0" {
 		t.FailNow()
 	}
 
-	if savedInst.ID != "hello" {
+	if savedTool.ID != "hello" {
 		t.FailNow()
 	}
 }

@@ -1,10 +1,9 @@
-package toolbx
+package command
 
 import (
+	"github.com/sn3d/toolbx/pkg/tempfs"
 	"strings"
 	"testing"
-	v1 "toolbx/api"
-	"toolbx/testutil"
 )
 
 func Test_GetCommand(t *testing.T) {
@@ -29,12 +28,12 @@ func Test_GetCommand(t *testing.T) {
 		},
 	} {
 		t.Run(table.description, func(t *testing.T) {
-			dir, err := testutil.CreateTestData("./testdata/commands")
+			dir, err := tempfs.New("./testdata/commands")
 			if err != nil {
 				t.FailNow()
 			}
 
-			cmdRepo := CreateCommandsRepository(dir)
+			cmdRepo := CreateCommandsRepository(dir.GetRoot())
 			cmd, err := cmdRepo.GetCommand(table.args)
 			if err != nil {
 				t.FailNow()
@@ -78,7 +77,7 @@ func Test_GetSubcommands(t *testing.T) {
 //     and: description isn't empty
 func Test_loadMetadata(t *testing.T) {
 
-	cmd := v1.Command{
+	cmd := CommandInstance{
 		Dir: "./testdata/commands/k8s/create",
 	}
 

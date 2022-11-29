@@ -1,22 +1,39 @@
-package testutil
+package tempfs
 
 import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
-func CreateTestData(src string) (string, error) {
+type TempFs struct {
+	rootDir string
+}
 
-	// create temporary testutil dir
-	dest, err := os.MkdirTemp("", "toolbx-")
+func New(src string) (*TempFs, error) {
+	// create temporary root dir
+	rootDir, err := os.MkdirTemp("", "tempfs-")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// copy content
-	err = copyDir(src, dest)
-	return dest, err
+	err = copyDir(src, rootDir)
+	if err != nil {
+		return nil, err
+	}
+
+	return &TempFs{rootDir}, nil
+}
+
+func (tfs *TempFs) GetRoot() string {
+	return tfs.rootDir
+}
+
+// Get returns you absolute path for given path
+func (tfs *TempFs) Get(path string) string {
+	return filepath.Join(tfs.rootDir, path)
 }
 
 func copyDir(src string, dest string) error {

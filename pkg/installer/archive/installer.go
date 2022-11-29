@@ -10,19 +10,11 @@ import (
 	"path/filepath"
 )
 
-type ArchiveInstaller struct {
-	BearerToken string
-}
-
-func Installer(bearerToken string) *ArchiveInstaller {
-	return &ArchiveInstaller{
-		BearerToken: bearerToken,
-	}
-}
-
 // Install is downloading artifact archive and unzip it into destination
-// folder
-func (i *ArchiveInstaller) Install(uri url.URL, installationDir string) error {
+// folder. Usually it's somewhere in data directory. You can also provide
+// bearer token. This is needed if you're downloading archive e.g. from
+// corporate GitLab
+func Install(uri url.URL, destDir string, bearerToken string) error {
 
 	uri.Scheme = "https"
 
@@ -32,9 +24,9 @@ func (i *ArchiveInstaller) Install(uri url.URL, installationDir string) error {
 		return err
 	}
 
-	if i.BearerToken != "" {
-		req.Header.Add("PRIVATE-TOKEN", i.BearerToken)
-		req.Header.Add("Bearer", i.BearerToken)
+	if bearerToken != "" {
+		req.Header.Add("PRIVATE-TOKEN", bearerToken)
+		req.Header.Add("Bearer", bearerToken)
 	}
 
 	// Get the data
@@ -45,7 +37,7 @@ func (i *ArchiveInstaller) Install(uri url.URL, installationDir string) error {
 	defer resp.Body.Close()
 
 	// write body to 'archive.zip'
-	archivePath := filepath.Join(installationDir, "archive.zip")
+	archivePath := filepath.Join(destDir, "archive.zip")
 	out, err := os.OpenFile(archivePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
@@ -57,7 +49,7 @@ func (i *ArchiveInstaller) Install(uri url.URL, installationDir string) error {
 	}
 
 	// unzip the archive
-	err = extractZip(archivePath, installationDir)
+	err = extractZip(archivePath, destDir)
 	if err != nil {
 		return err
 	}

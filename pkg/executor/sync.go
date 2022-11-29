@@ -1,4 +1,4 @@
-package toolbx
+package executor
 
 import (
 	"fmt"
@@ -10,6 +10,9 @@ import (
 	"time"
 )
 
+// sync clone the toolbx definition from repository to commandsDir folder. The
+// sync process is executed everytime when toolbx is executed. To keep it fast,
+// the function do real cloning only once per day
 func sync(repo, branch, token, syncFile string, commandsDir string) error {
 	var err error
 

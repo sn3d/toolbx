@@ -1,4 +1,4 @@
-package toolbx
+package executor
 
 import (
 	"os"

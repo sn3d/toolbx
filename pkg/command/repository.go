@@ -1,4 +1,4 @@
-package toolbx
+package command
 
 import (
 	"errors"
@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"toolbx/api"
 )
 
 type CommandsRepository struct {
@@ -20,8 +19,8 @@ func CreateCommandsRepository(commandsDir string) *CommandsRepository {
 	}
 }
 
-func (repo *CommandsRepository) GetCommand(args []string) (*api.Command, error) {
-	rootCmd := &api.Command{
+func (repo *CommandsRepository) GetCommand(args []string) (*CommandInstance, error) {
+	rootCmd := &CommandInstance{
 		Name: "",
 		Dir:  repo.commandsDir,
 		Args: args,
@@ -40,12 +39,12 @@ func (repo *CommandsRepository) GetCommand(args []string) (*api.Command, error) 
 	return subCmd, nil
 }
 
-func (repo *CommandsRepository) GetSubcommands(cmd *api.Command) ([]*api.Command, error) {
-	subcommands := make([]*api.Command, 0)
+func (repo *CommandsRepository) GetSubcommands(cmd *CommandInstance) ([]*CommandInstance, error) {
+	subcommands := make([]*CommandInstance, 0)
 	items, _ := ioutil.ReadDir(cmd.Dir)
 	for _, item := range items {
 		if item.IsDir() && item.Name()[0] != '.' {
-			cmd := &api.Command{
+			cmd := &CommandInstance{
 				Parent: cmd,
 				Name:   item.Name(),
 				Dir:    filepath.Join(cmd.Dir, item.Name()),
@@ -63,12 +62,12 @@ func (repo *CommandsRepository) GetSubcommands(cmd *api.Command) ([]*api.Command
 	return subcommands, nil
 }
 
-func getSubCommand(cmd *api.Command, args []string) (*api.Command, error) {
+func getSubCommand(cmd *CommandInstance, args []string) (*CommandInstance, error) {
 	if len(args) == 0 {
 		return nil, NoChildError
 	}
 
-	subCmd := &api.Command{
+	subCmd := &CommandInstance{
 		Parent: cmd,
 		Name:   args[0],
 		Dir:    filepath.Join(cmd.Dir, args[0]),
@@ -94,10 +93,10 @@ func getSubCommand(cmd *api.Command, args []string) (*api.Command, error) {
 //
 // If file is not present, then is returned empty Metadata with no
 // error.
-func loadMetadata(cmd *api.Command) error {
+func loadMetadata(cmd *CommandInstance) error {
 
 	path := filepath.Join(cmd.Dir, "command.yaml")
-	meta := &api.Metadata{}
+	meta := &Metadata{}
 
 	// if 'command.yaml' is missing, we will return empty
 	// metadata.

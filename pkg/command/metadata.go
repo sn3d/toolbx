@@ -1,4 +1,4 @@
-package api
+package command
 
 type Metadata struct {
 	Version     string    `yaml:"version"`
