@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/sn3d/toolbx/pkg/config"
 	"github.com/sn3d/toolbx/pkg/executor"
 	"os"
@@ -14,15 +15,11 @@ func RunToolbx(options ...ToolbxOption) error {
 		option(&cfg)
 	}
 
-	exec, err := executor.Initialize(cfg)
+	exec := executor.Create(cfg)
+	err := exec.Execute(os.Args)
 	if err != nil {
-		fmt.Errorf("error %v", err)
-		os.Exit(1)
-	}
-
-	err = exec.Execute(os.Args)
-	if err != nil {
-		fmt.Errorf("error %v", err)
+		red := color.New(color.FgHiRed).SprintfFunc()
+		fmt.Printf("%s: %v\n", red("error"), err)
 		os.Exit(1)
 	}
 

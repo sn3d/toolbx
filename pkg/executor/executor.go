@@ -20,36 +20,18 @@ import (
 type ToolbxExecutor struct {
 	config             config.Configuration
 	installedToolsRepo *tool.InstalledToolsRepository
+	commandsRepo       *command.CommandsRepository
 }
 
-// Create and initialize new instance with
-// given configuration options
-func Initialize(cfg config.Configuration) (*ToolbxExecutor, error) {
-
-	// set default values
+func Create(cfg config.Configuration) *ToolbxExecutor {
 	executor := &ToolbxExecutor{
 		config: cfg,
 	}
-
-	// validation & post-initialization
-	if executor.config.CommandsRepository == "" {
-		return nil, MissingRepoError
-	}
-
-	dir.Ensure(executor.getCommandsDir())
-	dir.Ensure(executor.getToolsDir())
-
-	err := sync(cfg.CommandsRepository, cfg.CommandsBranch, cfg.GitlabToken, executor.getSyncFile(), executor.getCommandsDir())
-	if err != nil {
-		return nil, err
-	}
-
-	executor.installedToolsRepo = tool.CreateInstallationsRepository(executor.getToolsDir())
-
-	return executor, nil
+	return executor
 }
 
-// Execute the given command
+// Execute the given command. It might be dot command (e.g. '.configure')
+// or user defined command that will invoke tool
 func (e *ToolbxExecutor) Execute(args []string) error {
 	if len(os.Args) >= 2 && strings.HasPrefix(os.Args[1], ".") {
 		return e.runDotCommand(args)
@@ -63,13 +45,29 @@ func (e *ToolbxExecutor) runCommand(args []string) error {
 		return nil
 	}
 
-	commands := command.CreateCommandsRepository(e.getCommandsDir())
-	cmd, err := commands.GetCommand(args[1:])
+	// validation & initialization
+	if e.config.CommandsRepository == "" {
+		return MissingRepoError
+	}
+
+	dir.Ensure(e.getCommandsDir())
+	dir.Ensure(e.getToolsDir())
+
+	err := sync(e.config.CommandsRepository, e.config.CommandsBranch, e.config.GitlabToken, e.getSyncFile(), e.getCommandsDir())
 	if err != nil {
 		return err
 	}
 
-	subCmds, err := commands.GetSubcommands(cmd)
+	e.installedToolsRepo = tool.CreateInstallationsRepository(e.getToolsDir())
+	e.commandsRepo = command.CreateCommandsRepository(e.getCommandsDir())
+
+	// execution of command
+	cmd, err := e.commandsRepo.GetCommand(args[1:])
+	if err != nil {
+		return err
+	}
+
+	subCmds, err := e.commandsRepo.GetSubcommands(cmd)
 	if err != nil {
 		return err
 	}
@@ -77,29 +75,15 @@ func (e *ToolbxExecutor) runCommand(args []string) error {
 	// is it a group or final executable command?
 	if len(subCmds) > 0 {
 		// it's group because having sub commands,
-		// let's print list of sub-commands
-		name := cmd.Name
-		if name == "" {
-			name = e.config.BrandLabel
-		}
-
+		// let's print help and list of sub-commands
 		if len(cmd.Args) > 0 {
 			fmt.Printf("Unknown sub-command '%s'\n", cmd.Args[0])
+		} else {
+			e.printHelpWithList(cmd, subCmds)
 		}
-
-		fmt.Printf("\n%s\n", cmd.Metadata.Description)
-
-		d := color.New(color.FgHiWhite, color.Bold)
-		d.Printf("\nAvailable sub-commands for %s\n\n", name)
-
-		for _, subcommand := range subCmds {
-			fmt.Printf(" %s - %s\n", subcommand.Name, subcommand.Metadata.Description)
-		}
-
-		fmt.Printf("\n")
 	} else {
-		// it's command because there is no sub commands
-		// let's execute it
+		// it's final command because there is no sub commands
+		// let's invoke tool for this command
 		var t *tool.ToolInstance
 		t, isInstalled := e.isInstalledAndUpdated(cmd)
 		if !isInstalled {
@@ -129,6 +113,8 @@ func (e *ToolbxExecutor) runDotCommand(args []string) error {
 	switch dotCommand {
 	case "configure":
 		cli.ConfigureCmd(os.Args[2:])
+	case "help":
+		cli.HelpCmd(os.Args[2:])
 	default:
 		log.Fatalf("Unsupported dot command '%s' \n", dotCommand)
 	}
@@ -170,16 +156,16 @@ func (e *ToolbxExecutor) install(cmd *command.CommandInstance) (*tool.ToolInstan
 }
 
 func (e *ToolbxExecutor) isInstalledAndUpdated(cmd *command.CommandInstance) (*tool.ToolInstance, bool) {
-	installation := e.installedToolsRepo.GetToolForCommand(cmd)
-	if installation == nil {
+	tool := e.installedToolsRepo.GetToolForCommand(cmd)
+	if tool == nil {
 		return nil, false
 	}
 
-	if installation.InstalledVersion != cmd.Metadata.Version {
+	if tool.InstalledVersion != cmd.Metadata.Version {
 		return nil, false
 	}
 
-	return installation, true
+	return tool, true
 }
 
 // function returns directory where are commands defined. Usually it's
@@ -198,4 +184,25 @@ func (e *ToolbxExecutor) getToolsDir() string {
 // $TOOLBX_DATA/sync
 func (e *ToolbxExecutor) getSyncFile() string {
 	return path.Join(e.config.DataDir, "sync")
+}
+
+// this function is executed when you invoke command with other subcommands
+// and print the command's  description or help with list of available
+// subcommands
+func (e *ToolbxExecutor) printHelpWithList(cmd *command.CommandInstance, subCmds []*command.CommandInstance) {
+	name := cmd.Name
+	if name == "" {
+		name = e.config.BrandLabel
+	}
+
+	fmt.Printf("\n%s\n", cmd.Metadata.Description)
+
+	d := color.New(color.FgHiWhite, color.Bold)
+	d.Printf("\nAvailable sub-commands for %s\n\n", name)
+
+	for _, subcommand := range subCmds {
+		fmt.Printf(" %s - %s\n", subcommand.Name, subcommand.Metadata.Description)
+	}
+
+	fmt.Printf("\n")
 }
