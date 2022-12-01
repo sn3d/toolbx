@@ -110,15 +110,15 @@ func (e *ToolbxExecutor) runCommand(args []string) error {
 
 func (e *ToolbxExecutor) runDotCommand(args []string) error {
 	dotCommand := args[1][1:]
-	switch dotCommand {
-	case "configure":
-		cli.ConfigureCmd(os.Args[2:])
-	case "help":
-		cli.HelpCmd(os.Args[2:])
-	default:
-		log.Fatalf("Unsupported dot command '%s' \n", dotCommand)
+
+	for _, c := range cli.DotCommands {
+		if c.Name == dotCommand {
+			c.Func(os.Args[2:])
+			return nil
+		}
 	}
 
+	log.Fatalf("Unsupported dot command '%s' \n", dotCommand)
 	return nil
 }
 
