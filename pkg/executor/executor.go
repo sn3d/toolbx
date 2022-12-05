@@ -53,7 +53,7 @@ func (e *ToolbxExecutor) runCommand(args []string) error {
 	dir.Ensure(e.getCommandsDir())
 	dir.Ensure(e.getToolsDir())
 
-	err := sync(e.config.CommandsRepository, e.config.CommandsBranch, e.config.GitlabToken, e.getSyncFile(), e.getCommandsDir())
+	err := sync(e.config.CommandsRepository, e.config.CommandsBranch, e.config.Token, e.getSyncFile(), e.getCommandsDir())
 	if err != nil {
 		return err
 	}
@@ -140,7 +140,7 @@ func (e *ToolbxExecutor) install(cmd *command.CommandInstance) (*tool.ToolInstan
 		return nil, err
 	}
 
-	opts := installer.InstallationOptions{BearerToken: e.config.GitlabToken}
+	opts := installer.InstallationOptions{BearerToken: e.config.Token}
 
 	err = installer.Install(*uri, toolDir, opts)
 	if err != nil {

@@ -13,8 +13,8 @@ func main() {
 
 	err := sdk.RunToolbx(
 		sdk.WithBrandLabel("toolbx"),
-		sdk.WithGitlab(os.Getenv("GITLAB_TOKEN")),
-		sdk.WithXdg("toolbx"),
+		sdk.WithXdg("toolbx"), // configuration is loaded from $HOME/.config/toolbx/toolbx.yaml and data are stored in $HOME/.local/share/toolbx
+		sdk.WithBearerToken(os.Getenv("GITLAB_TOKEN")),
 	)
 
 	if err != nil {

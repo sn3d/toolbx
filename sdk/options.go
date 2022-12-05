@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 )
 
 type ToolbxOption func(cfg *config.Configuration)
@@ -19,7 +20,6 @@ type ToolbxOption func(cfg *config.Configuration)
 //
 func WithXdg(name string) ToolbxOption {
 	return func(cfg *config.Configuration) {
-
 		configHome := dir.XdgConfigHome()
 		toolbxConfigFile := path.Join(configHome, cfg.BrandLabel, cfg.BrandLabel+".yaml")
 		WithConfigFile(toolbxConfigFile)(cfg)
@@ -32,13 +32,14 @@ func WithXdg(name string) ToolbxOption {
 
 // WithConfigFile ensure the configuration will be loaded
 // from path. Path need to contain also YAML file.
-func WithConfigFile(path string) ToolbxOption {
+func WithConfigFile(path ...string) ToolbxOption {
 	return func(cfg *config.Configuration) {
-		if _, err := os.Stat(path); os.IsNotExist(err) {
+		cfgFile := filepath.Join(path...)
+		if _, err := os.Stat(cfgFile); os.IsNotExist(err) {
 			return
 		}
 
-		yamlFile, err := ioutil.ReadFile(path)
+		yamlFile, err := ioutil.ReadFile(cfgFile)
 		if err != nil {
 			return
 		}
@@ -60,10 +61,10 @@ func WithConfigFile(path string) ToolbxOption {
 }
 
 // If you want to use GitLab for distribution, you need to
-// provide GitLab token
-func WithGitlab(personalAccessToken string) ToolbxOption {
+// provide GitLab personal access token
+func WithBearerToken(token string) ToolbxOption {
 	return func(cfg *config.Configuration) {
-		cfg.GitlabToken = personalAccessToken
+		cfg.Token = token
 	}
 }
 
@@ -78,8 +79,9 @@ func WithCommandsRepository(repo string, branch string) ToolbxOption {
 
 // WithDataDir set data directory, where are placed
 // installations etc...
-func WithDataDir(dataDir string) ToolbxOption {
+func WithDataDir(path ...string) ToolbxOption {
 	return func(cfg *config.Configuration) {
+		dataDir := filepath.Join(path...)
 		if dataDir != "" {
 			dir.Ensure(dataDir)
 			cfg.DataDir = dataDir

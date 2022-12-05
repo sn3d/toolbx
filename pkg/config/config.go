@@ -9,7 +9,7 @@ type Configuration struct {
 
 	// GitLab token used for cloning command repository from GitLab or getting tools hosted
 	// in GitLab as artifacts
-	GitlabToken string
+	Token string
 
 	// Absolute path to data directory where are stored installed tools,
 	// synced repo etc.
