@@ -14,8 +14,7 @@ func main() {
 	err := sdk.RunToolbx(
 		sdk.WithBrandLabel("toolbx"),
 		sdk.WithGitlab(os.Getenv("GITLAB_TOKEN")),
-		sdk.WithXdgData(),
-		sdk.WithXdgConfig(),
+		sdk.WithXdg("toolbx"),
 	)
 
 	if err != nil {

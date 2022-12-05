@@ -34,7 +34,7 @@ func Create(cfg config.Configuration) *ToolbxExecutor {
 // or user defined command that will invoke tool
 func (e *ToolbxExecutor) Execute(args []string) error {
 	if len(os.Args) >= 2 && strings.HasPrefix(os.Args[1], ".") {
-		return e.runDotCommand(args)
+		return e.runDotCommand(e.config, args)
 	} else {
 		return e.runCommand(args)
 	}
@@ -108,7 +108,7 @@ func (e *ToolbxExecutor) runCommand(args []string) error {
 	return nil
 }
 
-func (e *ToolbxExecutor) runDotCommand(args []string) error {
+func (e *ToolbxExecutor) runDotCommand(cfg config.Configuration, args []string) error {
 	dotCommand := args[1][1:]
 
 	for _, c := range cli.DotCommands {

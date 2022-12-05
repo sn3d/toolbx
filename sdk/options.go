@@ -11,18 +11,19 @@ import (
 
 type ToolbxOption func(cfg *config.Configuration)
 
-// load configuration file from $HOME/.config/{brand label}/{brand label}.yaml
-func WithXdgConfig() ToolbxOption {
+// WithXdg ensure the toolbx will use XDG directory spec.
+// for config files and all data files.
+//
+// The data will be stored in $HOME/.local/share/{name} and configuration
+// will be loaded from $HOME/.config/{name}/{name}.yaml
+//
+func WithXdg(name string) ToolbxOption {
 	return func(cfg *config.Configuration) {
+
 		configHome := dir.XdgConfigHome()
 		toolbxConfigFile := path.Join(configHome, cfg.BrandLabel, cfg.BrandLabel+".yaml")
 		WithConfigFile(toolbxConfigFile)(cfg)
-	}
-}
 
-// data like installations will be stored in $HOME/.local/share/{brand label}
-func WithXdgData() ToolbxOption {
-	return func(cfg *config.Configuration) {
 		dataHome := dir.XdgDataHome()
 		toolbxDataHome := path.Join(dataHome, cfg.BrandLabel)
 		WithDataDir(toolbxDataHome)(cfg)
