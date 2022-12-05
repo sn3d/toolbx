@@ -59,12 +59,12 @@ But for easy to use you should move the `toolbx` binary somewhere in your `PATH`
 
 ## Quick Start
 
-When you installed `toolbx` binary, as second step is configuration of your 
-[command repository](https://github.com/sn3d/toolbx-demo). It's repository 
-where are all command groups and subcommands defined. You can use `toolbx-demo` repository:
+When you installed `toolbx` binary, as second step is configure it. All you need is executing 
+`.cofigure` dot-command with repository where are all command groups and subcommands defined.
+You can use [toolbx-demo](https://github.com/sn3d/toolbx-demo) repository.
 
 ```
-$ echo "repository: https://github.com/sn3d/toolbx-demo.git" > ~/.toolbx.yaml
+$ ./toolbx .configure -repository https://github.com/sn3d/toolbx-demo.git
 ```
 
 Now you can start using `toolbx`. If you run subcommand `toolbx storage`, you
@@ -75,7 +75,7 @@ $ toolbx storage
 
 managing organization storage systems
 
-Available subcommands for storage
+Available sub-commands for storage
 
  kafka - manage Kafka
  postgres - manage PostgreSQL in organization
